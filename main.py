@@ -75,7 +75,7 @@ def myStyle(log_queue):
     async def on_ready():
         global RESULT
         try:
-            req = requests.get("http://localhost:8501")
+            req = requests.get("http://localhost:8888")
             log_queue.put(
                 (
                     "info",
