@@ -70,7 +70,6 @@ def _emit(log_queue, level, message):
 def myStyle(log_queue):
     intents = discord.Intents.all()
     client = discord.Client(intents=intents)
-    authorizations = json.loads(str(os.getenv("authorizations")).replace("'", '"'))
 
     @client.event
     async def on_ready():
