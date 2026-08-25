@@ -74,8 +74,21 @@ def myStyle(log_queue):
     @client.event
     async def on_ready():
         global RESULT
-        if not keepLive.is_running():
-            keepLive.start()
+        try:
+            req = requests.get("http://localhost:8888")
+            log_queue.put(
+                (
+                    "info",
+                    f"Phát hiện instance khác đang chạy (status {req.status_code}), dừng instance này",
+                )
+            )
+            await client.close()
+            return
+        except Exception as error:
+            print(error)
+            server.b()
+            if not keepLive.is_running():
+                keepLive.start()
 
     @tasks.loop(seconds=30)
     async def keepLive():
