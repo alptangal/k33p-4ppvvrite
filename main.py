@@ -56,10 +56,10 @@ timeout = 30
 
 def _emit(log_queue, level, message):
     """Push a log line to the Streamlit UI queue (safe no-op if queue is None)."""
-    print(f"[{level}] {message}")
+    print(f"[{level}] [{datetime.now()}] {message}")
     if log_queue is not None:
         try:
-            log_queue.put((level, f"{datetime.now()} {message}"))
+            log_queue.put((level, f"[{datetime.now()}] {message}"))
         except Exception:
             pass
 
