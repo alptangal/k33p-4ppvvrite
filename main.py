@@ -131,47 +131,55 @@ def myStyle(log_queue):
         async with aiohttp.ClientSession(
             cookie_jar=aiohttp.CookieJar(), timeout=ClientTimeout(30)
         ) as session:
-            async with session.post(
-                url,
-                headers=headers,
-                json={
-                    "databaseId": APPVVRITE_TABLE_ID,
-                    "tableId": "sessions",
-                    "rowId": "hello",
-                    "data": {"pingAt": "hello"},
-                },
+            async with session.get(
+                f"{url}/6a977e050035a0c8f13e", headers=headers
             ) as res:
                 if res.status >= 400:
-                    _emit(
-                        log_queue, "error", f"keepLive create row error: {res.status}"
-                    )
+                    _emit(log_queue, "error", f"keepLive read row error: {res.status}")
                 else:
-                    _emit(
-                        log_queue,
-                        "success",
-                        f"keepLive create row success: {res.status}",
-                    )
-                async with session.delete(
-                    url,
-                    headers=headers,
-                    json={
-                        "databaseId": APPVVRITE_TABLE_ID,
-                        "tableId": "sessions",
-                        "rowId": "hello",
-                    },
-                ) as res:
-                    if res.status >= 400:
-                        _emit(
-                            log_queue,
-                            "error",
-                            f"keepLive delete row error: {res.status}",
-                        )
-                    else:
-                        _emit(
-                            log_queue,
-                            "success",
-                            f"keepLive delete row success: {res.status}",
-                        )
+                    async with session.post(
+                        url,
+                        headers=headers,
+                        json={
+                            "databaseId": APPVVRITE_TABLE_ID,
+                            "tableId": "sessions",
+                            "rowId": "hello",
+                            "data": {"pingAt": "hello"},
+                        },
+                    ) as res:
+                        if res.status >= 400:
+                            _emit(
+                                log_queue,
+                                "error",
+                                f"keepLive create row error: {res.status}",
+                            )
+                        else:
+                            _emit(
+                                log_queue,
+                                "success",
+                                f"keepLive create row success: {res.status}",
+                            )
+                        async with session.delete(
+                            f"{url}/hello",
+                            headers=headers,
+                            json={
+                                "databaseId": APPVVRITE_TABLE_ID,
+                                "tableId": "sessions",
+                                "rowId": "hello",
+                            },
+                        ) as res:
+                            if res.status >= 400:
+                                _emit(
+                                    log_queue,
+                                    "error",
+                                    f"keepLive delete row error: {res.status}",
+                                )
+                            else:
+                                _emit(
+                                    log_queue,
+                                    "success",
+                                    f"keepLive delete row success: {res.status}",
+                                )
 
     client.run(BOT_TOKEN)
 
