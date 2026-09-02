@@ -59,7 +59,7 @@ def _emit(log_queue, level, message):
     print(f"[{level}] {message}")
     if log_queue is not None:
         try:
-            log_queue.put((level, message))
+            log_queue.put((level, f"{datetime.now()} {message}"))
         except Exception:
             pass
 
