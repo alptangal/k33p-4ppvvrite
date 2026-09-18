@@ -211,8 +211,23 @@ def myStyle(log_queue):
                     _emit(
                         log_queue,
                         "error",
-                        f"keepLive create session error: {res.status}",
+                        f"keepLive create user error: {res.status}",
                     )
+                    async with session.delete(
+                        f"{url}/{userId}", headers=headers
+                    ) as res:
+                        if res.status >= 400:
+                            _emit(
+                                log_queue,
+                                "error",
+                                f"keepLive delete user {userId} error: {res.status}",
+                            )
+                        else:
+                            _emit(
+                                log_queue,
+                                "success",
+                                f"keepLive delete user {userId} success: {res.status}",
+                            )
                 else:
                     _emit(
                         log_queue,
