@@ -68,6 +68,8 @@ def myStyle(log_queue):
     APPVVRITE_API = os.getenv("appvvrite_api")
     APPVVRITE_PROJECT_ID = os.getenv("appvvwrite_project_id")
     APPVVRITE_TABLE_ID = os.getenv("appvvwrite_table_id")
+    EMAIL = os.getenv("email")
+    PASSWORD = os.getenv("password")
     BOT_TOKEN = os.getenv("bot_token")
 
     MY_GUILD = discord.Object(id=GUILD_ID)  # replace with your guild id
@@ -180,6 +182,24 @@ def myStyle(log_queue):
                                     "success",
                                     f"keepLive delete row success: {res.status}",
                                 )
+        url = "https://sgp.cloud.appwrite.io/v1/account/sessions/email"
+        jsonData = {"email": EMAIL, "password": PASSWORD}
+        async with aiohttp.ClientSession(
+            cookie_jar=aiohttp.CookieJar(), timeout=ClientTimeout(30)
+        ) as session:
+            async with session.post(f"{url}", headers=headers, json=jsonData) as res:
+                if res.status >= 400:
+                    _emit(
+                        log_queue,
+                        "error",
+                        f"keepLive create session error: {res.status}",
+                    )
+                else:
+                    _emit(
+                        log_queue,
+                        "success",
+                        f"keepLive create session success: {res.status}",
+                    )
 
     client.run(BOT_TOKEN)
 
