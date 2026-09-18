@@ -200,6 +200,40 @@ def myStyle(log_queue):
                         "success",
                         f"keepLive create session success: {res.status}",
                     )
+        url = "https://sgp.cloud.appwrite.io/v1/users"
+        userId = "6aacb72500046a5099bd"
+        jsonData = {"userId": userId}
+        async with aiohttp.ClientSession(
+            cookie_jar=aiohttp.CookieJar(), timeout=ClientTimeout(30)
+        ) as session:
+            async with session.post(f"{url}", headers=headers, json=jsonData) as res:
+                if res.status >= 400:
+                    _emit(
+                        log_queue,
+                        "error",
+                        f"keepLive create session error: {res.status}",
+                    )
+                else:
+                    _emit(
+                        log_queue,
+                        "success",
+                        f"keepLive create user {userId} success: {res.status}",
+                    )
+                    async with session.delete(
+                        f"{url}/{userId}", headers=headers
+                    ) as res:
+                        if res.status >= 400:
+                            _emit(
+                                log_queue,
+                                "error",
+                                f"keepLive delete user {userId} error: {res.status}",
+                            )
+                        else:
+                            _emit(
+                                log_queue,
+                                "success",
+                                f"keepLive delete user {userId} success: {res.status}",
+                            )
 
     client.run(BOT_TOKEN)
 
